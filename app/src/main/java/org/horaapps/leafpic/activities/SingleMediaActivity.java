@@ -90,6 +90,7 @@ public class SingleMediaActivity extends SharedMediaActivity implements BaseMedi
     private static final String TAG = SingleMediaActivity.class.getSimpleName();
 
     private static final int SLIDE_SHOW_INTERVAL = 5000;
+    private static final int PALETTE_INTERVAL = 1024;
     private static final String ISLOCKED_ARG = "isLocked";
 
     public static final String ACTION_OPEN_ALBUM = "org.horaapps.leafpic.intent.VIEW_ALBUM";
@@ -313,6 +314,12 @@ public class SingleMediaActivity extends SharedMediaActivity implements BaseMedi
             } finally {
                 handler.postDelayed(this, SLIDE_SHOW_INTERVAL);
             }
+        }
+    };
+    Runnable paletteRunnable = new Runnable() {
+        @Override
+        public void run() {
+            handler.postDelayed(this,PALETTE_INTERVAL);
         }
     };
 
@@ -669,6 +676,9 @@ public class SingleMediaActivity extends SharedMediaActivity implements BaseMedi
                 paletteIntent.setData(LegacyCompatFileProvider.getUri(this,
                         getCurrentMedia().getFile()));
                 paletteIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                
+                handler.postDelayed(paletteRunnable,PALETTE_INTERVAL);
+                
                 startActivity(paletteIntent);
                 break;
 
