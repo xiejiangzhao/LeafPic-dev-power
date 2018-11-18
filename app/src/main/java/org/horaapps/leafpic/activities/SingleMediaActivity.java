@@ -371,9 +371,9 @@ public class SingleMediaActivity extends SharedMediaActivity implements BaseMedi
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-//        Glide.get(getApplicationContext()).clearMemory();
-//        Glide.get(getApplicationContext()).trimMemory(TRIM_MEMORY_COMPLETE);
-//        System.gc();
+        Glide.get(getApplicationContext()).clearMemory();
+        Glide.get(getApplicationContext()).trimMemory(TRIM_MEMORY_COMPLETE);
+        System.gc();
     }
 
     @Override
@@ -688,8 +688,9 @@ public class SingleMediaActivity extends SharedMediaActivity implements BaseMedi
                 isSlideShowOn = !isSlideShowOn;
                 if (isSlideShowOn) {
                     handler.postDelayed(slideShowRunnable, SLIDE_SHOW_INTERVAL);
+
                     hideSystemUI();
-                } else handler.removeCallbacks(slideShowRunnable);
+                }
                 supportInvalidateOptionsMenu();
 
         }
@@ -838,7 +839,6 @@ public class SingleMediaActivity extends SharedMediaActivity implements BaseMedi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler = null;
     }
 }
 
