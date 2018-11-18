@@ -221,7 +221,7 @@ public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallbac
   @Override
   public void stop() {
     isStarted = false;
-    stopRunning();
+//    stopRunning();
   }
 
   private void startRunning() {
@@ -249,7 +249,7 @@ public class GifDrawable extends Drawable implements GifFrameLoader.FrameCallbac
         + " visibility.");
     isVisible = visible;
     if (!visible) {
-      stopRunning();
+      //stopRunning();
     } else if (isStarted) {
       startRunning();
     }
