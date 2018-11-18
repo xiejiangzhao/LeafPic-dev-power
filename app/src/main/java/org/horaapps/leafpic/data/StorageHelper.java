@@ -160,7 +160,7 @@ public class StorageHelper {
 
 				if (outStream != null) {
 					// Both for SAF and for Kitkat, write to output stream.
-					byte[] buffer = new byte[4096]; // MAGIC_NUMBER
+					byte[] buffer = new byte[4]; // MAGIC_NUMBER
 					int bytesRead;
 					while ((bytesRead = inStream.read(buffer)) != -1) outStream.write(buffer, 0, bytesRead);
 					success = true;
