@@ -4,16 +4,17 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -44,29 +45,43 @@ import butterknife.Unbinder;
 public class SettingsActivity extends ThemedActivity {
     private Toolbar toolbar;
 
-    @BindView(R.id.option_max_brightness) SettingWithSwitchView optionMaxBrightness;
-    @BindView(R.id.option_picture_orientation) SettingWithSwitchView optionOrientation;
-    @BindView(R.id.option_full_resolution) SettingWithSwitchView optionDelayFullRes;
+    @BindView(R.id.option_max_brightness)
+    SettingWithSwitchView optionMaxBrightness;
+    @BindView(R.id.option_picture_orientation)
+    SettingWithSwitchView optionOrientation;
+    @BindView(R.id.option_full_resolution)
+    SettingWithSwitchView optionDelayFullRes;
 
-    @BindView(R.id.option_auto_update_media) SettingWithSwitchView optionAutoUpdateMedia;
-    @BindView(R.id.option_include_video) SettingWithSwitchView optionIncludeVideo;
-    @BindView(R.id.option_swipe_direction) SettingWithSwitchView optionSwipeDirection;
+    @BindView(R.id.option_auto_update_media)
+    SettingWithSwitchView optionAutoUpdateMedia;
+    @BindView(R.id.option_include_video)
+    SettingWithSwitchView optionIncludeVideo;
+    @BindView(R.id.option_swipe_direction)
+    SettingWithSwitchView optionSwipeDirection;
 
-    @BindView(R.id.option_fab) SettingWithSwitchView optionShowFab;
-    @BindView(R.id.option_statusbar) SettingWithSwitchView optionStatusbar;
-    @BindView(R.id.option_colored_navbar) SettingWithSwitchView optionColoredNavbar;
+    @BindView(R.id.option_fab)
+    SettingWithSwitchView optionShowFab;
+    @BindView(R.id.option_statusbar)
+    SettingWithSwitchView optionStatusbar;
+    @BindView(R.id.option_colored_navbar)
+    SettingWithSwitchView optionColoredNavbar;
 
-    @BindView(R.id.option_sub_scaling) SettingWithSwitchView optionSubScaling;
-    @BindView(R.id.option_disable_animations) SettingWithSwitchView optionDisableAnimations;
+    @BindView(R.id.option_sub_scaling)
+    SettingWithSwitchView optionSubScaling;
+    @BindView(R.id.option_disable_animations)
+    SettingWithSwitchView optionDisableAnimations;
 
     private Unbinder unbinder;
     private static byte[] bytes;
+    private Criteria criteria = new Criteria();
+    private LocationManager locationManager;
 
     public static void startActivity(@NonNull Context context) {
         context.startActivity(new Intent(context, SettingsActivity.class));
 
 
     }
+
     /*
      Bug 4: Handler内存泄漏
 
@@ -115,12 +130,6 @@ public class SettingsActivity extends ThemedActivity {
         }
         ScrollView scrollView = findViewById(R.id.settingAct_scrollView);
         setScrollViewColor(scrollView);
-
-        /* Bug 6*/
-        //PowerManager pm = (PowerManager) getBaseContext().getSystemService(Context.POWER_SERVICE);
-        //PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "costpowertest");
-        //wakeLock.acquire();
-
         /*
          Bug 4: Handler内存泄漏
          */
@@ -137,6 +146,12 @@ public class SettingsActivity extends ThemedActivity {
     @CallSuper
     @Override
     public void updateUiElements() {
+//        try {
+//            locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+//        }
+//        catch (Exception e){
+//
+//        }
         super.updateUiElements();
         findViewById(org.horaapps.leafpic.R.id.setting_background).setBackgroundColor(getBackgroundColor());
         setStatusBarColor();
@@ -144,6 +159,7 @@ public class SettingsActivity extends ThemedActivity {
         setRecentApp(getString(org.horaapps.leafpic.R.string.settings));
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void setStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -157,18 +173,36 @@ public class SettingsActivity extends ThemedActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_basic_theme)
     public void onChangeThemeClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         new ColorsSetting(SettingsActivity.this).chooseBaseTheme();
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_card_view_style)
     public void onChangeCardViewStyleClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         new CardViewStyleSetting(SettingsActivity.this).show();
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_security)
     public void onSecurityClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         if (Security.isPasswordSet()) {
             askPassword();
         } else startActivity(new Intent(getApplicationContext(), SecurityActivity.class));
@@ -188,8 +222,14 @@ public class SettingsActivity extends ThemedActivity {
         });
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_primaryColor)
     public void onChangePrimaryColorClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         final int originalColor = getPrimaryColor();
         new ColorsSetting(SettingsActivity.this).chooseColor(R.string.primary_color, new ColorsSetting.ColorChooser() {
             @Override
@@ -215,8 +255,14 @@ public class SettingsActivity extends ThemedActivity {
         }, getPrimaryColor());
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_accentColor)
     public void onChangeAccentColorClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         final int originalColor = getAccentColor();
         new ColorsSetting(SettingsActivity.this).chooseColor(R.string.accent_color, new ColorsSetting.ColorChooser() {
             @Override
@@ -242,29 +288,59 @@ public class SettingsActivity extends ThemedActivity {
         }, getAccentColor());
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_custom_icon_color)
     public void onChangedCustomIconClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         updateTheme();
         updateUiElements();
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_white_list)
     public void onWhiteListClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         startActivity(new Intent(getApplicationContext(), BlackWhiteListActivity.class));
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_custom_thirdAct)
     public void onCustomThirdActClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         new SinglePhotoSetting(SettingsActivity.this).show();
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_map_provider)
     public void onMapProviderClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         new MapProviderSetting(SettingsActivity.this).choseProvider();
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.ll_n_columns)
     public void onChangeColumnsClicked(View view) {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        final String TAG = "MyActivity";
+        Log.i(TAG, "GPS!!! ");
+        locationManager.getLastKnownLocation("gps");
         new GeneralSetting(SettingsActivity.this).editNumberOfColumns();
     }
 
