@@ -849,6 +849,7 @@ public class SingleMediaActivity extends SharedMediaActivity implements BaseMedi
     @Override
     protected void onDestroy() {
         handler.removeCallbacks(slideShowRunnable); // 这个是上次该改的bug的位置，应该加上吧
+        handler = null;  // 不知道怎么被删掉了=。= 我没检查这里，要加上才能闪退。
         super.onDestroy();
     }
 }
